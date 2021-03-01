@@ -12,10 +12,10 @@ import androidx.core.content.FileProvider;
 import java.io.File;
 import java.io.FileOutputStream;
 
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String LOG_FILENAME = "com.example.loggerapp.LOG_FILENAME";
-    private String fileContent = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +71,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void writeToFile(String body) {
-        fileContent = fileContent.concat('\n' + body);
-        try (FileOutputStream fos = openFileOutput(LOG_FILENAME, Context.MODE_PRIVATE)) {
-            fos.write(fileContent.getBytes());
+        try (FileOutputStream fos = openFileOutput(LOG_FILENAME, Context.MODE_PRIVATE | Context.MODE_APPEND)) {
+            fos.write(('\n' + body).getBytes());
         } catch (Exception e) {
             e.printStackTrace();
         }

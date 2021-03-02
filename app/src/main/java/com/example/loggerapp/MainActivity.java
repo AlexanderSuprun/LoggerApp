@@ -32,8 +32,10 @@ public class MainActivity extends AppCompatActivity {
                         new File(getFilesDir(), LOG_FILENAME));
 
                 if (fileUri != null) {
-                    Intent shareIntent = new Intent(Intent.ACTION_SEND, fileUri);
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    shareIntent.setType("text/*");
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
                     startActivity(shareIntent);
                 }
             }

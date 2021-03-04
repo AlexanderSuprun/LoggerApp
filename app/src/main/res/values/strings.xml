@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">LoggerApp</string>
     <string name="share_file">Share file</string>
+    <string name="fab_menu">Menu</string>
+    <string name="fab_select_picture">Select picture</string>
+    <string name="fab_take_a_picture">Take a picture</string>
 </resources>

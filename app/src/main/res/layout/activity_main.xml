@@ -6,14 +6,85 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_view_activity_main_show_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_activity_main_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/default_margin_small"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:contentDescription="@string/fab_take_a_picture"
+        android:elevation="@dimen/fab_default_elevation"
+        android:focusable="true"
+        android:src="@drawable/ic_photo_camera_white_18dp"
+        android:visibility="invisible"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toTopOf="@id/fab_activity_main_pick_picture"
+        app:layout_constraintEnd_toEndOf="@id/fab_activity_main_menu"
+        app:layout_constraintStart_toStartOf="@id/fab_activity_main_menu"
+        app:pressedTranslationZ="@dimen/fab_translation_z" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_activity_main_pick_picture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/default_margin_small"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:contentDescription="@string/fab_select_picture"
+        android:elevation="@dimen/fab_default_elevation"
+        android:focusable="true"
+        android:src="@drawable/ic_collections_white_18dp"
+        android:visibility="invisible"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toTopOf="@id/fab_activity_main_share_file"
+        app:layout_constraintEnd_toEndOf="@id/fab_activity_main_menu"
+        app:layout_constraintStart_toStartOf="@id/fab_activity_main_menu"
+        app:pressedTranslationZ="@dimen/fab_translation_z" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_activity_main_share_file"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin_small"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
         android:contentDescription="@string/share_file"
-        android:src="@android:drawable/ic_menu_share"
+        android:elevation="@dimen/fab_default_elevation"
+        android:focusable="true"
+        android:src="@drawable/ic_share_white_18dp"
+        android:visibility="invisible"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toTopOf="@id/fab_activity_main_menu"
+        app:layout_constraintEnd_toEndOf="@id/fab_activity_main_menu"
+        app:layout_constraintStart_toStartOf="@id/fab_activity_main_menu"
+        app:pressedTranslationZ="@dimen/fab_translation_z" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_activity_main_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_margin_big"
+        android:layout_marginBottom="@dimen/default_margin_big"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:contentDescription="@string/fab_menu"
+        android:elevation="@dimen/fab_default_elevation"
+        android:focusable="true"
+        android:src="@drawable/ic_add_24dp"
+        android:visibility="visible"
+        app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:pressedTranslationZ="@dimen/fab_translation_z" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

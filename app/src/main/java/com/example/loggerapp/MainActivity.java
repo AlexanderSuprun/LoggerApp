@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -82,19 +80,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && data != null) {
-            switch (requestCode) {
-                case REQUEST_PICK_PHOTO:
-                    Glide.with(MainActivity.this)
-                            .load(data.getData())
-                            .into(imageView);
-                    break;
-                case REQUEST_IMAGE_CAPTURE:
-                    Log.i("PHOTO_URI:", photoURI.toString());
-                    Glide.with(MainActivity.this)
-                            .load(photoURI)
-                            .into(imageView);
-            }
+        if (resultCode == RESULT_OK && requestCode == REQUEST_PICK_PHOTO && data != null) {
+            Glide.with(MainActivity.this)
+                    .load(data.getData())
+                    .into(imageView);
+        } else if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_CAPTURE) {
+            Log.i("PHOTO_URI:", "" + photoURI.toString());
+            Glide.with(MainActivity.this)
+                    .load(photoURI)
+                    .into(imageView);
         }
     }
 
@@ -117,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
                         getString(R.string.provider_authority),
                         photoFile);
                 intentTakePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                Log.i("PHOTO_URI:", photoURI.toString());
                 startActivityForResult(intentTakePicture, REQUEST_IMAGE_CAPTURE);
             }
         }

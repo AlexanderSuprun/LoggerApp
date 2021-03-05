@@ -4,4 +4,8 @@
     <string name="fab_menu">Menu</string>
     <string name="fab_select_picture">Select picture</string>
     <string name="fab_take_a_picture">Take a picture</string>
+    <string name="provider_authority">com.example.loggerapp.fileprovider</string>
+    <string name="message_rationale">Allow to use camera for taking photos</string>
+    <string name="button_title_allow">Allow</string>
+    <string name="button_title_block">Block</string>
 </resources>

@@ -5,12 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -28,6 +28,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -41,8 +42,10 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PICK_PHOTO = 100;
     private static final int REQUEST_IMAGE_CAPTURE = 200;
     private static final int PERMISSION_REQUEST_CAMERA = 300;
+    private static final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 400;
     private boolean isOpen = false;
     private boolean isCameraAllowed = false;
+    private boolean isExtStorageAllowed = false;
     private AppCompatImageView imageView;
     private Uri photoURI;
 
@@ -63,6 +66,13 @@ public class MainActivity extends AppCompatActivity {
         } else {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
         }
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            isExtStorageAllowed = true;
+        } else {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_EXTERNAL_STORAGE);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -74,22 +84,57 @@ public class MainActivity extends AppCompatActivity {
             } else if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
                 showRationale();
             }
+        } else if (requestCode == PERMISSION_REQUEST_EXTERNAL_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                isExtStorageAllowed = true;
+            }
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQUEST_PICK_PHOTO && data != null) {
-            Glide.with(MainActivity.this)
-                    .load(data.getData())
-                    .into(imageView);
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+            if (selectedImage != null) {
+                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn,
+                        null, null, null);
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    String picturePath = cursor.getString(cursor.getColumnIndex(filePathColumn[0]));
+                    try {
+                        Glide.with(MainActivity.this)
+                                .load(copyFileToCache(picturePath))
+                                .into(imageView);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    cursor.close();
+                }
+            }
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_CAPTURE) {
-            Log.i("PHOTO_URI:", "" + photoURI.toString());
             Glide.with(MainActivity.this)
                     .load(photoURI)
                     .into(imageView);
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private File copyFileToCache(String filePath) throws IOException {
+        FileInputStream fis = new FileInputStream(getContentResolver()
+                .openFileDescriptor(Uri.parse("file://" + filePath), "r", null)
+                .getFileDescriptor());
+        File outputFile = new File(getCacheDir(), new File(filePath).getName());
+        FileOutputStream fos = new FileOutputStream(outputFile);
+
+        byte[] buf = new byte[8192];
+        int length;
+        while ((length = fis.read(buf)) > 0) {
+            fos.write(buf, 0, length);
+        }
+        return outputFile;
     }
 
     private void dispatchTakePictureIntent() {
@@ -204,9 +249,11 @@ public class MainActivity extends AppCompatActivity {
         fabSelectPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentPickPhoto = new Intent(Intent.ACTION_PICK,
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intentPickPhoto, REQUEST_PICK_PHOTO);
+                if (isExtStorageAllowed) {
+                    Intent intentPickPhoto = new Intent(Intent.ACTION_PICK,
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intentPickPhoto, REQUEST_PICK_PHOTO);
+                }
             }
         });
 

@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
     private AppCompatImageView imageView;
     private Uri photoURI;
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,20 +57,25 @@ public class MainActivity extends AppCompatActivity {
         setupFABMenu();
         imageView = findViewById(R.id.image_view_activity_main_show_image);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
-            isCameraAllowed = true;
-        } else if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-            showRationale();
-        } else {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED) {
+                isCameraAllowed = true;
+            } else if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                showRationale();
+            } else {
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
+            }
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-            isExtStorageAllowed = true;
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                isExtStorageAllowed = true;
+            } else {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_EXTERNAL_STORAGE);
+            }
         } else {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_EXTERNAL_STORAGE);
+            isCameraAllowed = true;
+            isExtStorageAllowed = true;
         }
     }
 
@@ -91,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -121,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private File copyFileToCache(String filePath) throws IOException {
         FileInputStream fis = new FileInputStream(getContentResolver()
                 .openFileDescriptor(Uri.parse("file://" + filePath), "r", null)
